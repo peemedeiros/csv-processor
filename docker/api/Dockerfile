@@ -28,6 +28,4 @@ COPY ./custom-php.ini /usr/local/etc/php/conf.d/custom-php.ini
 RUN chmod +x /entrypoint.sh
 RUN chmod +x /worker-entrypoint.sh
 
-EXPOSE 80/tcp
-
 ENTRYPOINT ["/entrypoint.sh"]
