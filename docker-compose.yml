@@ -64,6 +64,7 @@ services:
         networks:
             - csv-processor
         depends_on:
+            - api
             - db
 networks:
     csv-processor:
