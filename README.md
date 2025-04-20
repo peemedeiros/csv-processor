@@ -28,13 +28,13 @@ Não é necessário ter PHP, Composer ou MySQL instalados em sua máquina local.
 Copie o arquivo de exemplo `.env.example` para criar seu arquivo `.env`:
 
 ```shell script
-cp .env.example .env
+  cp .env.example .env
 ```
 
 ### 2. Iniciar Contêineres Docker
 
 ```shell script
-docker-compose up -d
+  docker-compose up -d
 ```
 
 ### 3. Acessar a API
@@ -50,22 +50,30 @@ http://localhost:8080
 
 ## Comandos Úteis
 
+### Gerar Arquivo CSV
+ Onde rows é o número de linhas que deseja criar
+```shell script
+  docker-compose exec worker php artisan app:generate-csv {rows}
+```
+O arquivo será gerado em storage/app/uploads/test.csv
+Este arquivo também é usado para os teste na FileController.
+
 ### Executar Testes
 
 ```shell script
-docker-compose exec api php artisan test
+  docker-compose exec api php artisan test
 ```
 
 ### Acessar o Banco de Dados
 
 ```shell script
-docker-compose exec db mysql -u sail -ppassword laravel
+  docker-compose exec db mysql -u sail -ppassword laravel
 ```
 
 ## Processamento de Arquivos CSV
 
 ```bash
-docker-compose exec db mysql -u sail -ppassword laravel
+  docker-compose exec db mysql -u sail -ppassword laravel
 ```
 # Guia de Utilização da API
 Este guia fornece instruções passo a passo para utilizar a API do sistema CSV Processor. As rotas principais incluem autenticação, upload de arquivos, e monitoramento do status de importação.

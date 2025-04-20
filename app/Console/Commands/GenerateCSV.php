@@ -30,7 +30,7 @@ class GenerateCSV extends Command
             Storage::makeDirectory('uploads');
         }
 
-        $filePath = 'private/uploads/' . $csvFileName;
+        $filePath = 'uploads/' . $csvFileName;
 
         $file = fopen(storage_path('app/' . $filePath), 'w');
 
