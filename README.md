@@ -18,7 +18,10 @@ CSV Processor é uma aplicação web que permite o upload, processamento e anál
 - Docker
 - Docker Compose
 
-Não é necessário ter PHP, Composer ou MySQL instalados em sua máquina local.
+## Estrutura Docker
+- **api**: Servidor web Laravel
+- **db**: Banco de dados MySQL
+
 
 ## Configuração e Instalação
 
@@ -42,22 +45,16 @@ Após iniciar os contêineres, a API estará acessível em:
 http://localhost:8080
 ```
 
-## Estrutura Docker
-- **api**: Servidor web Laravel
-- **db**: Banco de dados MySQL
 
-## Comandos necessários
-
-### Gerar Arquivo CSV
- Onde rows é o número de linhas que deseja criar
+### 4. Gerar Arquivo CSV
+ rows é o número de linhas que deseja criar
 ```shell script
   docker-compose exec api php artisan app:generate-csv {rows}
 ```
-- O arquivo será gerado em storage/app/uploads/test.csv
-- Este arquivo também é usado para os teste na FileController.
-- Crie uma cópia do arquivo para enviar para upload.
+- O arquivo será gerado em storage/app/uploads/file_to_upload.csv
+- Você pode usa-lo para realizar o upload.
 
-### Executar jobs na FILA
+### 5. Executar jobs na FILA
 Após enviar um arquivo para upload, seu processamento ficará em pending até que a fila seja executada
 ```shell script
   docker-compose exec api php artisan queue:work
@@ -127,6 +124,8 @@ Authorization: Bearer seu_token_aqui
 ```
 ### 4. Upload de Arquivo CSV
 Para realizar o upload de um arquivo CSV:
+- Selecione o arquivo que gerou com o command
+- Envie-o na requisição abaixo.
 ``` http
 POST http://localhost:8000/api/upload
 Accept: application/json
@@ -135,7 +134,7 @@ Content-Type: multipart/form-data
 
 [Selecione o arquivo CSV]
 ```
-Na pasta `Workspace`, há um arquivo CSV disponível para testes. Alternativamente, você pode usar o comando fornecido para gerar um CSV com a quantidade de linhas desejada.
+
 ### 5. Verificar Status da Importação
 Para acompanhar o status do processamento:
 ``` http

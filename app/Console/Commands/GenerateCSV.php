@@ -24,7 +24,7 @@ class GenerateCSV extends Command
 
         $faker = Factory::create('pt_BR');
 
-        $csvFileName = 'test.csv';
+        $csvFileName = 'file_to_upload.csv';
 
         if (!Storage::exists('uploads')) {
             Storage::makeDirectory('uploads');
