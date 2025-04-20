@@ -1,0 +1,55 @@
+@baseURL = http://localhost:8080
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2xvZ2luIiwiaWF0IjoxNzQ1MTI2NTY4LCJleHAiOjE3NDUxMzAxNjgsIm5iZiI6MTc0NTEyNjU2OCwianRpIjoiZzJkZXpKeWRoelR1eWhTYyIsInN1YiI6IjU0IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.1yGNGozw6h8HkpAZpWJfAAavkmDBJISMG39u6JP-TCM
+
+### Obter usuários
+GET {{baseURL}}/api/users
+Authorization: Bearer {{token}}
+
+### Criar novo usuário
+POST {{baseURL}}/api/users
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "john doe",
+    "email": "john.doe2@example.com",
+    "birth_date": "15/01/1990",
+    "password": "12345678"
+}
+
+### Verificar status de importação
+GET {{baseURL}}/api/import-status/12
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Obter erros do processo de importação
+GET {{baseURL}}/api/import-process/2312/errors
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Fazer upload de arquivo
+POST {{baseURL}}/api/upload
+Accept: application/json
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="users_small.csv"
+Content-Type: text/csv
+
+< ../storage/app/uploads/users_small.csv
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Login
+POST {{baseURL}}/api/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "john.doe2@example.com",
+    "password": "12345678"
+}
+
+### Verificar saúde do worker
+GET {{baseURL}}/api/worker-health?verbose=true
+Accept: application/json

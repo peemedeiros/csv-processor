@@ -1,61 +1,157 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CSV Processor
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Um microserviço para processamento de arquivos CSV, construído com Laravel e Docker.
 
-## About Laravel
+## Sobre o Projeto
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+CSV Processor é uma aplicação web que permite o upload, processamento e análise de arquivos CSV. A aplicação utiliza fila de processamento para lidar com arquivos grandes de forma eficiente, oferecendo uma interface intuitiva para visualizar e trabalhar com dados tabulares.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tecnologias
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Laravel 12
+- PHP 8.4
+- MySQL 8.0
+- Docker & Docker Compose
+- Queue Workers
 
-## Learning Laravel
+## Requisitos
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Docker
+- Docker Compose
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Não é necessário ter PHP, Composer ou MySQL instalados em sua máquina local.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Configuração e Instalação
 
-## Laravel Sponsors
+### 1. Configurar Variáveis de Ambiente
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Copie o arquivo de exemplo `.env.example` para criar seu arquivo `.env`:
 
-### Premium Partners
+```shell script
+cp .env.example .env
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+### 2. Iniciar Contêineres Docker
 
-## Contributing
+```shell script
+docker-compose up -d
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Acessar a API
+Após iniciar os contêineres, a API estará acessível em:
+```
+http://localhost:8080
+```
 
-## Code of Conduct
+## Estrutura Docker
+- **api**: Servidor web Laravel
+- **db**: Banco de dados MySQL
+- **worker**: Processador de filas para operações assíncronas
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Comandos Úteis
 
-## Security Vulnerabilities
+### Executar Testes
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```shell script
+docker-compose exec api php artisan test
+```
 
-## License
+### Acessar o Banco de Dados
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```shell script
+docker-compose exec db mysql -u sail -ppassword laravel
+```
+
+## Processamento de Arquivos CSV
+
+```bash
+docker-compose exec db mysql -u sail -ppassword laravel
+```
+# Guia de Utilização da API
+Este guia fornece instruções passo a passo para utilizar a API do sistema CSV Processor. As rotas principais incluem autenticação, upload de arquivos, e monitoramento do status de importação.
+
+## Sobre o Processamento de Arquivos
+O sistema foi projetado para lidar com volumes massivos de dados de forma eficiente. O processo de upload envia o arquivo para `/storage/app/uploads` e as linhas são processadas em fila, utilizando uma lógica de processamento em chunks para otimizar o desempenho.
+Você pode acompanhar o progresso do processamento através da rota `/api/import-status/{id}`.
+
+## Recursos para Testes
+Para auxiliar nos testes, os seguintes recursos estão disponíveis na pasta `workspace`:
+- **Collection do Postman**: Importável para testes rápidos da API
+- **Arquivo de Ambiente do Postman**: Contém variáveis de ambiente para a collection
+- **Arquivo HTTP**: Alternativa para executar requisições diretamente de editores como VS Code ou JetBrains IDEs
+
+Você pode escolher a opção que melhor se adequa ao seu fluxo de trabalho para testar a API.
+
+## Passo a Passo
+### 1. Criar um Usuário
+Primeiro, você precisa criar um usuário para obter acesso às rotas protegidas:
+``` http
+POST http://localhost:8000/api/users
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Avaliador Teste",
+  "email": "avaliador@example.com",
+  "birth_date": "01/01/1990",
+  "password": "12345678"
+}
+```
+### 2. Realizar Login
+Após criar o usuário, faça login para obter o token JWT:
+``` http
+POST http://localhost:8000/api/login
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email": "avaliador@example.com",
+  "password": "12345678"
+}
+```
+A resposta incluirá um token JWT que você deve copiar para usar nas próximas requisições.
+### 3. Acessar Rotas Protegidas
+Com o token em mãos, adicione-o ao cabeçalho de autorização das requisições protegidas:
+``` http
+Authorization: Bearer seu_token_aqui
+```
+### 4. Upload de Arquivo CSV
+Para realizar o upload de um arquivo CSV:
+``` http
+POST http://localhost:8000/api/upload
+Accept: application/json
+Authorization: Bearer seu_token_aqui
+Content-Type: multipart/form-data
+
+[Selecione o arquivo CSV]
+```
+Na pasta `Workspace`, há um arquivo CSV disponível para testes. Alternativamente, você pode usar o comando fornecido para gerar um CSV com a quantidade de linhas desejada.
+### 5. Verificar Status da Importação
+Para acompanhar o status do processamento:
+``` http
+GET http://localhost:8000/api/import-status/{id}
+Accept: application/json
+Authorization: Bearer seu_token_aqui
+```
+Substitua `{id}` pelo ID do processo de importação retornado pela API de upload.
+### 6. Verificar Erros do Processo de Importação (se houver)
+``` http
+GET http://localhost:8000/api/import-process/{id}/errors
+Accept: application/json
+Authorization: Bearer seu_token_aqui
+```
+### 7. Verificar Saúde do Worker
+``` http
+GET http://localhost:8000/api/worker-health?verbose=true
+Accept: application/json
+```
+## Nota sobre Arquivos Grandes
+Para arquivos CSV muito grandes (acima de 60MB), pode ser necessário ajustar as configurações do PHP no arquivo `.env`:
+``` dotenv
+PHP_POST_MAX_SIZE=60
+PHP_UPLOAD_MAX_FILESIZE=60
+```
+Aumente esses valores conforme necessário para permitir o upload de arquivos maiores.
+
+
+Agora você está pronto para realizar todos os testes da API! 🚀
