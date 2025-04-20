@@ -1,9 +1,9 @@
 services:
     api:
+        container_name: api
         build:
             context: './docker/api'
             dockerfile: Dockerfile
-        image: 'csv-processor-api'
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
@@ -19,6 +19,7 @@ services:
         depends_on:
             - db
     db:
+        container_name: db
         image: 'mysql/mysql-server:8.0'
         ports:
             - '${FORWARD_DB_PORT:-3306}:3306'
@@ -41,31 +42,6 @@ services:
                 - '-p${DB_PASSWORD}'
             retries: 3
             timeout: 5s
-    worker:
-        build:
-            context: './docker/api'
-            dockerfile: Dockerfile
-        image: 'csv-processor-api'
-        entrypoint: ["/worker-entrypoint.sh"]
-        command: php artisan queue:work --tries=2
-        restart: unless-stopped
-        volumes:
-            - '.:/var/www/html'
-        environment:
-            DB_CONNECTION: '${DB_CONNECTION}'
-            DB_HOST: '${DB_HOST}'
-            DB_PORT: '${DB_PORT}'
-            DB_DATABASE: '${DB_DATABASE}'
-            DB_USERNAME: '${DB_USERNAME}'
-            DB_PASSWORD: '${DB_PASSWORD}'
-            PHP_UPLOAD_MAX_FILESIZE: '${PHP_UPLOAD_MAX_FILESIZE:-10}'
-            PHP_POST_MAX_SIZE: '${PHP_POST_MAX_SIZE:-10}'
-            QUEUE_CONNECTION: database
-        networks:
-            - csv-processor
-        depends_on:
-            - api
-            - db
 networks:
     csv-processor:
         driver: bridge

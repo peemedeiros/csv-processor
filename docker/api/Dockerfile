@@ -19,13 +19,17 @@ RUN apt-get update && apt-get install -y \
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-COPY ./entrypoint.sh /entrypoint.sh
+ENV DOCKERIZE_VERSION v0.9.3
 
-COPY ./worker-entrypoint.sh /worker-entrypoint.sh
+RUN apt-get update \
+    && apt-get install -y wget \
+    && wget -O - https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz | tar xzf - -C /usr/local/bin \
+    && apt-get autoremove -yqq --purge wget && rm -rf /var/lib/apt/lists/*
+
+COPY ./entrypoint.sh /entrypoint.sh
 
 COPY ./custom-php.ini /usr/local/etc/php/conf.d/custom-php.ini
 
 RUN chmod +x /entrypoint.sh
-RUN chmod +x /worker-entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]

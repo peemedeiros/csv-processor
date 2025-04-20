@@ -12,7 +12,6 @@ CSV Processor é uma aplicação web que permite o upload, processamento e anál
 - PHP 8.4
 - MySQL 8.0
 - Docker & Docker Compose
-- Queue Workers
 
 ## Requisitos
 
@@ -46,35 +45,38 @@ http://localhost:8080
 ## Estrutura Docker
 - **api**: Servidor web Laravel
 - **db**: Banco de dados MySQL
-- **worker**: Processador de filas para operações assíncronas
 
-## Comandos Úteis
+## Comandos necessários
 
 ### Gerar Arquivo CSV
  Onde rows é o número de linhas que deseja criar
 ```shell script
-  docker-compose exec worker php artisan app:generate-csv {rows}
+  docker-compose exec api php artisan app:generate-csv {rows}
 ```
-O arquivo será gerado em storage/app/uploads/test.csv
-Este arquivo também é usado para os teste na FileController.
+- O arquivo será gerado em storage/app/uploads/test.csv
+- Este arquivo também é usado para os teste na FileController.
+- Crie uma cópia do arquivo para enviar para upload.
+
+### Executar jobs na FILA
+Após enviar um arquivo para upload, seu processamento ficará em pending até que a fila seja executada
+```shell script
+  docker-compose exec api php artisan queue:work
+```
+
+---
+## Comandos úteis
 
 ### Executar Testes
-
 ```shell script
   docker-compose exec api php artisan test
 ```
 
 ### Acessar o Banco de Dados
-
 ```shell script
   docker-compose exec db mysql -u sail -ppassword laravel
 ```
+---
 
-## Processamento de Arquivos CSV
-
-```bash
-  docker-compose exec db mysql -u sail -ppassword laravel
-```
 # Guia de Utilização da API
 Este guia fornece instruções passo a passo para utilizar a API do sistema CSV Processor. As rotas principais incluem autenticação, upload de arquivos, e monitoramento do status de importação.
 
@@ -148,11 +150,7 @@ GET http://localhost:8000/api/import-process/{id}/errors
 Accept: application/json
 Authorization: Bearer seu_token_aqui
 ```
-### 7. Verificar Saúde do Worker
-``` http
-GET http://localhost:8000/api/worker-health?verbose=true
-Accept: application/json
-```
+
 ## Nota sobre Arquivos Grandes
 Para arquivos CSV muito grandes (acima de 60MB), pode ser necessário ajustar as configurações do PHP no arquivo `.env`:
 ``` dotenv
