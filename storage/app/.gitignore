@@ -3,4 +3,4 @@
 !public/
 !.gitignore
 !uploads/
-!uploads/*
+!uploads/test.csv
